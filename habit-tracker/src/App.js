@@ -6,8 +6,8 @@ import "./App.css";
 import { useQuery, gql } from "@apollo/client";
 
 // App.js
-/** 
- * Imports 
+/**
+ * Imports
  * 1) 'useQuery' is a React hook
  * 2) 'gql' a function to pass in GraphQL syntax via a tagged template literal
  * https://thinkster.io/tutorials/up-and-running-with-gatsby-styling/using-styled-components */
