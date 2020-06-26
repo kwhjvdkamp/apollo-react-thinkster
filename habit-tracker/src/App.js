@@ -2,10 +2,9 @@ import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-// App.js
 import { useQuery, gql } from "@apollo/client";
 
-// App.js
+
 /**
  * Imports
  * 1) 'useQuery' is a React hook
@@ -17,50 +16,48 @@ const HABITS_QUERY = gql`
       id
       description
       points
+      entries {
+        id
+        notes
+        date
+        completed
+      }
     }
   }
 `;
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
-// App.js
 function App() {
     const { data, loading, error } = useQuery(HABITS_QUERY);
-  
+
     if (loading) {
       return <p>loading...</p>;
     }
-  
+
     if (error) {
       return <p>Ruh roh! {error.message}</p>;
     }
-  
+
     return (
       <>
         <h2>Habits</h2>
         <ul>
           {data.habits.map((habit) => {
             return (
-              <li key={habit.id}>{habit.description}</li>
+              <li key={habit.id}>
+              {`${habit.description} (${habit.points} points)`}
+              <ul>
+                {habit.entries &&
+                  habit.entries.map((entry) => {
+                    const date = new Date(entry.date).toLocaleDateString();
+                    const completed = entry.completed ? "✅" : "👫";
+                    return (
+                      <li
+                        key={entry.id}
+                      >{`${date}: ${entry.notes} (${completed})`}</li>
+                    );
+                  })}
+              </ul>
+            </li>
             );
           })}
         </ul>

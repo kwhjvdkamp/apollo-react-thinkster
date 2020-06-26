@@ -1,16 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
-
-// index.js
 import {
   ApolloClient,
   InMemoryCache,
   HttpLink,
   ApolloProvider,
 } from "@apollo/client";
+import './index.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+
 
 const client = new ApolloClient({
   cache: new InMemoryCache(),
@@ -34,5 +33,3 @@ ReactDOM.render(
 // Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-
-
