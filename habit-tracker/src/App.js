@@ -2,8 +2,8 @@ import React from "react";
 import logo from "./logo.svg";
 import { useQuery, gql } from "@apollo/client";
 import "./App.css";
-// import Loading from "./Loading";
-// import Error from "./Error";
+import Loading from "./Loading";
+import Error from "./Error";
 import Habit from "./Habit";
 import AddHabit from "./AddHabit";
 /**
@@ -24,6 +24,7 @@ export const HABITS_QUERY = gql`
         completed
       }
     }
+
     totalPoints {
       points
       totalCompletedEntries
@@ -35,16 +36,27 @@ function App() {
   const { data, loading, error } = useQuery(HABITS_QUERY);
 
   if (loading) {
-    return <div className="container">{/* <Loading /> */}</div>;
+    return (
+      <div className="container">
+        <Loading />
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="container">{/* <Error error={error} /> */}</div>;
+    return (
+      <div className="container">
+        <Error error={error} />
+      </div>
+    );
   }
 
   const { habits, totalPoints } = data;
   const entryString =
-    totalPoints.totalCompletedEntries.length > 1 ? "entries" : "entry";
+    totalPoints.totalCompletedEntries > 1 ||
+    totalPoints.totalCompletedEntries === 0
+      ? "entries"
+      : "entry";
 
   return (
     <div className="container">
@@ -56,8 +68,7 @@ function App() {
           </span>
         </h2>
         <p>
-          Total Points: {totalPoints.points} (
-          {totalPoints.totalCompletedEntries} {entryString})
+          {`Total Points: ${totalPoints.points} (${totalPoints.totalCompletedEntries} competed ${entryString})`}
         </p>
         <AddHabit />
       </div>
