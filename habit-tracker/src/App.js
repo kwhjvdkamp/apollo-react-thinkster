@@ -1,16 +1,17 @@
 import React from "react";
 import logo from "./logo.svg";
-import "./App.css";
-
 import { useQuery, gql } from "@apollo/client";
-
-
+import "./App.css";
+// import Loading from "./Loading";
+// import Error from "./Error";
+import Habit from "./Habit";
+import AddHabit from "./AddHabit";
 /**
  * Imports
  * 1) 'useQuery' is a React hook
  * 2) 'gql' a function to pass in GraphQL syntax via a tagged template literal
  * https://thinkster.io/tutorials/up-and-running-with-gatsby-styling/using-styled-components */
-const HABITS_QUERY = gql`
+export const HABITS_QUERY = gql`
   query HABITS_QUERY {
     habits {
       id
@@ -23,46 +24,50 @@ const HABITS_QUERY = gql`
         completed
       }
     }
+    totalPoints {
+      points
+      totalCompletedEntries
+    }
   }
 `;
 
 function App() {
-    const { data, loading, error } = useQuery(HABITS_QUERY);
+  const { data, loading, error } = useQuery(HABITS_QUERY);
 
-    if (loading) {
-      return <p>loading...</p>;
-    }
-
-    if (error) {
-      return <p>Ruh roh! {error.message}</p>;
-    }
-
-    return (
-      <>
-        <h2>Habits</h2>
-        <ul>
-          {data.habits.map((habit) => {
-            return (
-              <li key={habit.id}>
-              {`${habit.description} (${habit.points} points)`}
-              <ul>
-                {habit.entries &&
-                  habit.entries.map((entry) => {
-                    const date = new Date(entry.date).toLocaleDateString();
-                    const completed = entry.completed ? "✅" : "👫";
-                    return (
-                      <li
-                        key={entry.id}
-                      >{`${date}: ${entry.notes} (${completed})`}</li>
-                    );
-                  })}
-              </ul>
-            </li>
-            );
-          })}
-        </ul>
-      </>
-    );
+  if (loading) {
+    return <div className="container">{/* <Loading /> */}</div>;
   }
+
+  if (error) {
+    return <div className="container">{/* <Error error={error} /> */}</div>;
+  }
+
+  const { habits, totalPoints } = data;
+  const entryString =
+    totalPoints.totalCompletedEntries.length > 1 ? "entries" : "entry";
+
+  return (
+    <div className="container">
+      <div>
+        <h2 className="bottom-margin">
+          Habits{" "}
+          <span role="img" aria-label="muscle emoji">
+            💪
+          </span>
+        </h2>
+        <p>
+          Total Points: {totalPoints.points} (
+          {totalPoints.totalCompletedEntries} {entryString})
+        </p>
+        <AddHabit />
+      </div>
+      <ul className="habit-list">
+        {habits.map((habit) => {
+          return <Habit key={habit.id} habit={habit} />;
+        })}
+      </ul>
+    </div>
+  );
+}
 
 export default App;
