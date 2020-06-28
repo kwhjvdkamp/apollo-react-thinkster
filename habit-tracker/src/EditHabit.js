@@ -1,31 +1,23 @@
 import React, { useRef, useState } from "react";
 import { useMutation, gql } from "@apollo/client";
-import { HABITS_QUERY } from "./App";
 import Error from "./Error";
 import { useEscFn } from "./helpers/useEscFn";
+import { HABIT_FIELDS } from "./helpers/fragments";
 
 const UPDATE_HABIT_MUTATION = gql`
   mutation UPDATE_HABIT_MUTATION($input: UpdateHabitInput) {
     updateHabit(input: $input) {
-      id
-      description
-      points
-      entries {
-        id
-        notes
-        date
-        completed
-      }
+      ...HabitFields
     }
   }
+  ${HABIT_FIELDS}
 `;
 
 function EditHabit({ habit, onEditSuccess }) {
   const [description, setDescription] = useState(habit.description);
   const descriptionInput = useRef(null);
   const [updateHabit, { error, loading }] = useMutation(UPDATE_HABIT_MUTATION, {
-    refetchQueries: [{ query: HABITS_QUERY }],
-    awaitRefetchQueries: true,
+    onCompleted: () => onEditSuccess(),
   });
   useEscFn(onEditSuccess);
 

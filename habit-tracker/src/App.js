@@ -6,23 +6,12 @@ import Loading from "./Loading";
 import Error from "./Error";
 import Habit from "./Habit";
 import AddHabit from "./AddHabit";
-/**
- * Imports
- * 1) 'useQuery' is a React hook
- * 2) 'gql' a function to pass in GraphQL syntax via a tagged template literal
- * https://thinkster.io/tutorials/up-and-running-with-gatsby-styling/using-styled-components */
+import { HABIT_FIELDS } from "./helpers/fragments";
+
 export const HABITS_QUERY = gql`
   query HABITS_QUERY {
     habits {
-      id
-      description
-      points
-      entries {
-        id
-        notes
-        date
-        completed
-      }
+      ...HabitFields
     }
 
     totalPoints {
@@ -30,10 +19,13 @@ export const HABITS_QUERY = gql`
       totalCompletedEntries
     }
   }
+  ${HABIT_FIELDS}
 `;
 
 function App() {
-  const { data, loading, error } = useQuery(HABITS_QUERY);
+  const { data, loading, error } = useQuery(HABITS_QUERY, {
+    pollInterval: 1000,
+  });
 
   if (loading) {
     return (

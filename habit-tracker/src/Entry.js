@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation, gql } from "@apollo/client";
-import { HABITS_QUERY } from "./App";
+import { ENTRIES_QUERY } from "./Habit";
 
 const DELETE_ENTRY = gql`
   mutation DELETE_ENTRY($id: ID!) {
@@ -12,7 +12,9 @@ const DELETE_ENTRY = gql`
 
 export default function Entry({ entry, lastEntry, showEntryForm }) {
   const [deleteEntry, { error, loading }] = useMutation(DELETE_ENTRY, {
-    refetchQueries: [{ query: HABITS_QUERY }],
+    refetchQueries: [
+      { query: ENTRIES_QUERY, variables: { id: entry.habitId } },
+    ],
     awaitRefetchQueries: true,
   });
   const date = new Date(entry.date).toLocaleDateString();

@@ -1,20 +1,18 @@
 import React, { useRef, useState } from "react";
 import { useMutation, gql } from "@apollo/client";
 import DatePicker from "react-date-picker";
-import { HABITS_QUERY } from "./App";
+import { ENTRIES_QUERY } from "./Habit";
 import Error from "./Error";
 import { useEscFn } from "./helpers/useEscFn";
+import { ENTRY_FIELDS } from "./helpers/fragments";
 
 const CREATE_ENTRY_MUTATION = gql`
   mutation CREATE_ENTRY_MUTATION($input: NewEntryInput) {
     createEntry(input: $input) {
-      id
-      habitId
-      notes
-      date
-      completed
+      ...EntryFields
     }
   }
+  ${ENTRY_FIELDS}
 `;
 
 function AddEntry({ show, habitId, onAddEntrySuccess }) {
@@ -23,7 +21,8 @@ function AddEntry({ show, habitId, onAddEntrySuccess }) {
   const [completed, setCompleted] = useState(false);
   const notesInput = useRef(null);
   const [createEntry, { error, loading }] = useMutation(CREATE_ENTRY_MUTATION, {
-    refetchQueries: [{ query: HABITS_QUERY }],
+    refetchQueries: [{ query: ENTRIES_QUERY, variables: { id: habitId } }],
+    onCompleted: () => onAddEntrySuccess(),
   });
 
   const resetAndEmit = () => {
